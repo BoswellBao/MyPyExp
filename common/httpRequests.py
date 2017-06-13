@@ -1,9 +1,6 @@
 import requests
 
 class HttpRequests():
-    def sendPost(self,requesturl,data,heades):
-        self.requestURL=requesturl
-        self.data=data
-        self.heades=heades
-        response=requests.post(self.requestURL,self.data,self.heades)
+    def sendPost(list):
+        response=requests.post(list[0],list[1],list[2])
         return response

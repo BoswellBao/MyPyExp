@@ -8,10 +8,11 @@ class GetTVChannal(unittest.TestCase):
         print("----------开始测试----------")
 
     def test_getTVChannal(self):
-        reqURL = "http://www.webxml.com.cn/webservices/ChinaTVprogramWebService.asmx/getTVchannelDataSet"
+        req_url = "http://www.webxml.com.cn/webservices/ChinaTVprogramWebService.asmx/getTVchannelDataSet"
         req_data = {'theTVstationID': "ged"}
-        reqHeader = {"Content-Type":"application/x-www-form-urlencoded"}
-        response= HttpRequests.sendPost(reqURL,req_data,reqHeader)
+        req_head = {"Content-Type":"application/x-www-form-urlencoded"}
+        list=[req_url,req_data,req_head]
+        response = HttpRequests.sendPost(list)
         print(response.status_code)
         print(response.content.decode("utf-8"))
         # f=open('./test.txt','w')
