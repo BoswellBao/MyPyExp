@@ -3,17 +3,19 @@ import ddt
 import os
 from common.readExcel import ReadExcel
 from common.httpRequests import HttpRequests
+from common.writeExcel import WriteExcle
 
 
-
-def beforeTest():
+global file_path,sheet_name
+def dataForDDT():
+    global file_path, sheet_name
     file_path = os.path.join(os.path.dirname(__file__), 'getChannal.xls')
     sheet_name = 'getTVChannal'
 
     RE = ReadExcel()
     RE.getExcelData(file_path, sheet_name)
 
-    filter_para = ["remarks", "para_tvid", "expectedCode"]
+    filter_para = ["caseName","remarks", "para_tvid", "expectedCode"]
     filter_data = RE.filterData(filter_para)
     return tuple(filter_data)#要把列表转换为元组，ddt数据源是个tuple类型
 
@@ -27,21 +29,24 @@ class GetTVChannal(unittest.TestCase):
         print("----------开始测试----------")
 
 
-    @ddt.data(*beforeTest())
+    @ddt.data(*dataForDDT())
     @ddt.unpack
-    def test_getTVChannal(self,remarks,para_tvid,expectedCode):
+    def test_getTVChannal(self,caseName,remarks,para_tvid,expectedCode):
+        global file_path, sheet_name
         req_url = "http://www.webxml.com.cn/webservices/ChinaTVprogramWebService.asmx/getTVchannelDataSet"
         req_data = {'theTVstationID': para_tvid}
         req_head = {"Content-Type": "application/x-www-form-urlencoded"}
         list = [req_url, req_data, req_head]
         HttpR = HttpRequests()
         response = HttpR.sendPost(list)
-        self.assertEqual(expectedCode,str(response.status_code))
-        # print(response.status_code)
-        # print(response.content.decode("utf-8"))
-        # f=open('./test.txt','w')
-        # f.write(response.content.decode("utf-8"))
-        # f.close()
+        content = response.content.decode('utf-8')
+        flag = "fail"
+        try:
+            self.assertEqual(expectedCode,str(response.status_code))
+        finally:
+            write=WriteExcle()
+            write.writeIn(file_path,sheet_name,caseName,flag,content)
+
 
     def tearDown(self):
         '''测试用例执行完后释放资源'''

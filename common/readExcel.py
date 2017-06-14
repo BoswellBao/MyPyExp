@@ -10,7 +10,6 @@ class ReadExcel():
         table = rf.sheet_by_name(sheetname)
         rownum = table.nrows
         colnum = table.ncols
-        global excel_data
         excel_data = []
         for i in range(rownum):
             excel_data.append(table.row_values(i))
