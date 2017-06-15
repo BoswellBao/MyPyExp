@@ -43,6 +43,7 @@ class GetTVChannal(unittest.TestCase):
         flag = "fail"
         try:
             self.assertEqual(expectedCode,str(response.status_code))
+            flag = "pass"
         finally:
             write=WriteExcle()
             write.writeIn(file_path,sheet_name,caseName,flag,content)
