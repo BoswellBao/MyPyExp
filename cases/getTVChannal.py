@@ -2,11 +2,12 @@ import unittest
 import ddt
 import os
 from common.readExcel import ReadExcel
-from common.httpRequests import HttpRequests
+from common.httpRequests import PostRequest
 from common.writeExcel import WriteExcle
 
 
 global file_path,sheet_name
+
 def dataForDDT():
     global file_path, sheet_name
     file_path = os.path.join(os.path.dirname(__file__), 'getChannal.xls')
@@ -38,7 +39,7 @@ class GetTVChannal(unittest.TestCase):
         req_url = "http://www.webxml.com.cn/webservices/ChinaTVprogramWebService.asmx/getTVchannelDataSet"
         req_data = {'theTVstationID': para_tvid}
         req_head = {"Content-Type": "application/x-www-form-urlencoded"}
-        HttpReq = HttpRequests(req_url, req_data, req_head)
+        HttpReq = PostRequest(req_url, req_data, req_head)
         response = HttpReq.sendPost()
         content = response.content.decode('utf-8')
         flag = "fail"
