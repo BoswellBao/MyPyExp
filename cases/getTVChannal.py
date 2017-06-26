@@ -38,17 +38,16 @@ class GetTVChannal(unittest.TestCase):
         req_url = "http://www.webxml.com.cn/webservices/ChinaTVprogramWebService.asmx/getTVchannelDataSet"
         req_data = {'theTVstationID': para_tvid}
         req_head = {"Content-Type": "application/x-www-form-urlencoded"}
-        list = [req_url, req_data, req_head]
-        HttpR = HttpRequests()
-        response = HttpR.sendPost(list)
+        HttpReq = HttpRequests(req_url, req_data, req_head)
+        response = HttpReq.sendPost()
         content = response.content.decode('utf-8')
         flag = "fail"
         try:
             self.assertEqual(expectedCode,str(response.status_code))
             flag = "pass"
         finally:
-            write=WriteExcle()
-            write.writeIn(file_path,sheet_name,caseName,flag,content)
+            write=WriteExcle(file_path, sheet_name, caseName, flag, content)
+            write.writeIn()
 
 
     def tearDown(self):
