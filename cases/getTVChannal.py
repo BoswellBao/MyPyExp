@@ -12,12 +12,14 @@ def dataForDDT():
     file_path = os.path.join(os.path.dirname(__file__), 'getChannal.xls')
     sheet_name = 'getTVChannal'
 
-    RE = ReadExcel()
-    RE.getExcelData(file_path, sheet_name)
+    # RE = ReadExcel()
+    # RE.getExcelData(file_path, sheet_name)
 
     filter_para = ["caseName","remarks", "para_tvid", "expectedCode"]
-    filter_data = RE.filterData(filter_para)
-    return tuple(filter_data)#要把列表转换为元组，ddt数据源是个tuple类型
+    RE = ReadExcel(file_path, sheet_name, filter_para)
+    RE.getExcelData()
+    filter_data = RE.filterData()
+    return tuple(filter_data)    # 要把列表转换为元组，ddt数据源是个tuple类型
 
 
 
