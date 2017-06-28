@@ -20,7 +20,7 @@ class ReadExcel():
         rownum = table.nrows
         colnum = table.ncols
         excel_data = []
-        for i in range(rownum):  # 把每行作为一个元素放到excel_data这个列表里面，excel_data就成为二维数组
+        for i in range(rownum):    # 把每行作为一个元素放到excel_data这个列表里面，excel_data就成为二维数组
             excel_data.append(table.row_values(i))
 
     def filterData(self):

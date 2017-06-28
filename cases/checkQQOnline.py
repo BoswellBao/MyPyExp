@@ -3,9 +3,9 @@ import ddt
 import os
 from common.readExcel import ReadExcel
 from common.writeExcel import WriteExcle
-from common.httpRequests import PostRequest
+from common.httpRequests import GetRequest
 from common.constant import Constant
-
+from xml.etree import ElementTree as ET
 
 
 global file_path,sheet_name
@@ -14,9 +14,9 @@ def dataForDDT():
     global file_path, sheet_name
     project_path = (os.path.split(os.path.dirname(__file__)))[0]
     file_path = os.path.join(project_path, Constant.EXCEL_NAME)
-    sheet_name = 'getTVChannal'
+    sheet_name = 'checkQQOnline'
 
-    filter_para = ["caseName","remarks", "para_tvid", "expectedCode"]
+    filter_para = ["caseName","remarks", "para_QQ", "expectedCode"]
     RE = ReadExcel(file_path, sheet_name, filter_para)
     RE.getExcelData()
     filter_data = RE.filterData()
@@ -25,32 +25,37 @@ def dataForDDT():
 
 
 @ddt.ddt
-class GetTVChannal(unittest.TestCase):
+class CheckQQOnline(unittest.TestCase):
 
     def setUp(self):
         '''测试用例执行前的初始化'''
         print("----------开始测试----------")
 
-
     @ddt.data(*dataForDDT())
     @ddt.unpack
-    def test_getTVChannal(self,caseName,remarks,para_tvid,expectedCode):
+    def test_checkQQOnline(self, caseName, remarks, para_QQ, expectedCode):
         global file_path, sheet_name
-        interface_url = "/ChinaTVprogramWebService.asmx/getTVchannelDataSet"
+        interface_url = "/qqOnlineWebService.asmx/qqCheckOnline"
         req_url = Constant.BASIC_URL + interface_url
-        req_data = {'theTVstationID': para_tvid}
-        req_head = {"Content-Type": "application/x-www-form-urlencoded"}
-        HttpReq = PostRequest(req_url, req_data, req_head)
-        response = HttpReq.sendPost()
-        content = response.content.decode('utf-8')
+        print(para_QQ)
+        req_data = {"qqCode": para_QQ}
+        # req_head = {"Content-Type": "text/xml"}
+        HttpReq = GetRequest(req_url, req_data)
+        response = HttpReq.sendGet()
+        #获取xml格式内容
+        xml_content = response.text
+        # 解析xml格式内容
+        node = ET.XML(xml_content)
+        '''
+        Y：在线    N：离线    E：qq号码错误
+        '''
         flag = "fail"
         try:
-            self.assertEqual(expectedCode, str(response.status_code))
+            self.assertEqual(expectedCode, node.text)
             flag = "pass"
         finally:
-            write=WriteExcle(file_path, sheet_name, caseName, flag, content)
+            write=WriteExcle(file_path, sheet_name, caseName, flag, xml_content)
             write.writeIn()
-
 
     def tearDown(self):
         '''测试用例执行完后释放资源'''
@@ -60,7 +65,7 @@ class GetTVChannal(unittest.TestCase):
 if __name__ == "__main__":
     # 构造测试集
     suite = unittest.TestSuite()
-    suite.addTest(GetTVChannal("test_getTVChannal"))
+    suite.addTest(CheckQQOnline("test_checkQQOnline"))
     # 执行测试
     runner = unittest.TextTestRunner()
     runner.run(suite)
