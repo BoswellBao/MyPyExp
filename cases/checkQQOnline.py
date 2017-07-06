@@ -23,9 +23,11 @@ def dataForDDT():
     return tuple(filter_data)    # 要把列表转换为元组，ddt数据源是个tuple类型
 
 
-
 @ddt.ddt
 class CheckQQOnline(unittest.TestCase):
+    '''测试qq是否在线接口
+
+    '''
 
     def setUp(self):
         '''测试用例执行前的初始化'''
@@ -34,6 +36,7 @@ class CheckQQOnline(unittest.TestCase):
     @ddt.data(*dataForDDT())
     @ddt.unpack
     def test_checkQQOnline(self, caseName, remarks, para_QQ, expectedCode):
+
         global file_path, sheet_name
         interface_url = "/qqOnlineWebService.asmx/qqCheckOnline"
         req_url = Constant.BASIC_URL + interface_url
@@ -46,9 +49,6 @@ class CheckQQOnline(unittest.TestCase):
         xml_content = response.text
         # 解析xml格式内容
         node = ET.XML(xml_content)
-        '''
-        Y：在线    N：离线    E：qq号码错误
-        '''
         flag = "fail"
         try:
             self.assertEqual(expectedCode, node.text)

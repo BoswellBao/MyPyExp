@@ -7,7 +7,6 @@ from common.httpRequests import PostRequest
 from common.constant import Constant
 
 
-
 global file_path,sheet_name
 
 def dataForDDT():
@@ -26,6 +25,9 @@ def dataForDDT():
 
 @ddt.ddt
 class GetTVChannal(unittest.TestCase):
+    '''测试获取电视节目接口
+
+    '''
 
     def setUp(self):
         '''测试用例执行前的初始化'''
